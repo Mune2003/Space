@@ -1,0 +1,532 @@
+/* إعداد متغيرات الألوان للتحكم بالوضع الداكن والفاتح */
+:root[data-theme="dark"] {
+  --bg-color: #020208;
+  --text-color: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --stars-opacity: 0.7;
+  --nebula-opacity: 0.15;
+  --line-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme="light"] {
+  --bg-color: #f4f7f6;
+  --text-color: #111625;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(0, 0, 0, 0.1);
+  --stars-opacity: 0.1;
+  --nebula-opacity: 0.02;
+  --line-color: rgba(0, 0, 0, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  overflow-x: hidden;
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
+}
+
+/* تنسيق زر تبديل الوضع */
+.theme-toggle-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+.theme-toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+/* خلفية الفضاء والنجوم السلسة */
+.space-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+.stars-layer,
+.nebula-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s ease;
+}
+.stars-layer {
+  background-image: radial-gradient(white 1px, transparent 0);
+  background-size: 40px 40px;
+  opacity: var(--stars-opacity);
+}
+.nebula-layer {
+  background: radial-gradient(
+    circle,
+    rgba(80, 40, 120, 0.3) 0%,
+    transparent 70%
+  );
+  opacity: var(--nebula-opacity);
+}
+
+/* الهيدر وبطاقة المجرة */
+.main-header {
+  text-align: center;
+  padding: 60px 20px;
+  transition: opacity 0.4s ease;
+}
+.galaxy-section {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  transition: opacity 0.4s ease;
+}
+.galaxy-card {
+  max-width: 800px;
+  padding: 30px;
+  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(12px);
+  transition: all 0.5s ease;
+  text-align: center;
+}
+.galaxy-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.stat-item {
+  text-align: center;
+  padding: 10px;
+}
+
+/* نظام عرض الكواكب عمودياً خط الجاذبية */
+.solar-system-vertical {
+  position: relative;
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+}
+.system-line {
+  position: absolute;
+  top: 0;
+  right: 70px;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(transparent, var(--line-color), transparent);
+  transition: opacity 0.4s ease;
+}
+
+.celestial-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 80px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+.celestial-row.hidden {
+  opacity: 0;
+  transform: scale(0.7);
+  pointer-events: none;
+  height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+.celestial-row.active {
+  transform: scale(1.15);
+  justify-content: center;
+  width: 100%;
+}
+
+.visual-container {
+  width: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 30px;
+}
+.text-container {
+  flex: 1;
+  padding: 25px;
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(8px);
+  transition: all 0.5s ease;
+}
+.feature-tag {
+  font-size: 0.9em;
+  color: #ffd700;
+  margin: 6px 0;
+  font-weight: 500;
+}
+
+/* -------------------------------------------------------------
+   هيكل الأنميشن والتأثيرات البيئية الفريدة لكل كوكب (Core Animation)
+------------------------------------------------------------- */
+.planet-3d {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  position: relative;
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background-size: cover;
+}
+
+/* 1. تأثير الشمس الناري المتوهج */
+.sun {
+  background: radial-gradient(circle at 30% 30%, #ffea00, #ff5500, #990000);
+  box-shadow: 0 0 25px rgba(255, 69, 0, 0.6);
+}
+.fire-particle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px dashed #ff4500;
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+.celestial-row:hover .sun {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 50px #ff4500,
+    0 0 80px #ff8800;
+}
+.celestial-row:hover .fire-particle {
+  opacity: 0.8;
+  transform: rotate(180deg) scale(1.3);
+  animation: spin 4s linear infinite;
+}
+
+/* 2. تأثير عطارد وغبار الاصطدامات النيزكية */
+.mercury {
+  background: radial-gradient(circle at 30% 30%, #afafaf, #686868, #222);
+}
+.crater-dust {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  top: 20%;
+  left: 20%;
+  opacity: 0;
+  transition: all 0.5s;
+}
+.celestial-row:hover .mercury {
+  transform: rotate(-20deg) scale(1.1);
+}
+.celestial-row:hover .crater-dust {
+  opacity: 1;
+  transform: translate(-15px, -15px) scale(2);
+  background: rgba(150, 150, 150, 0);
+}
+
+/* 3. تأثير الزهرة والاحتباس الكبريتي الكثيف */
+.venus {
+  background: radial-gradient(circle at 30% 30%, #e3974f, #a0591b, #3a1d00);
+}
+.acid-cloud {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(245, 222, 179, 0.4) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: all 0.5s;
+}
+.celestial-row:hover .venus {
+  transform: scale(1.1);
+}
+.celestial-row:hover .acid-cloud {
+  opacity: 1;
+  transform: scale(1.4);
+}
+
+/* 4. تأثير الأرض الغلاف المائي ونبض الحياة البصري */
+.earth {
+  background: radial-gradient(circle at 30% 30%, #2389da, #1d6ca3, #0b2d46);
+  box-shadow: 0 0 15px rgba(35, 137, 218, 0.3);
+}
+.water-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0px rgba(0, 168, 255, 0.5);
+  transition: all 0.6s ease;
+}
+.tree-leaf {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
+  transition: all 0.5s;
+  font-size: 14px;
+}
+.celestial-row:hover .earth {
+  transform: rotate(45deg) scale(1.1);
+  box-shadow: 0 0 30px rgba(0, 168, 255, 0.7);
+}
+.celestial-row:hover .water-ring {
+  box-shadow: 0 0 0 12px rgba(0, 168, 255, 0);
+}
+.celestial-row:hover .tree-leaf {
+  opacity: 1;
+  transform: translate(15px, -15px) scale(1.3);
+}
+
+/* 5. تأثير المريخ والعواصف الترابية الحمراء الدوارة */
+.mars {
+  background: radial-gradient(circle at 30% 30%, #cc4e33, #8f2611, #3d0a00);
+}
+.sand-storm {
+  position: absolute;
+  width: 120%;
+  height: 20%;
+  background: rgba(204, 78, 51, 0.4);
+  top: 40%;
+  left: -10%;
+  opacity: 0;
+  transition: all 0.5s ease;
+  transform: rotate(10deg);
+}
+.celestial-row:hover .mars {
+  transform: scale(1.1);
+}
+.celestial-row:hover .sand-storm {
+  opacity: 1;
+  transform: rotate(0deg) scaleY(2);
+  animation: stormShift 1s linear infinite alternate;
+}
+
+/* 6. تأثير المشتري الصواعق والبرق الكهربائي */
+.jupiter {
+  background: radial-gradient(circle at 30% 30%, #d4a373, #a66c3b, #402203);
+}
+.lightning-bolt {
+  position: absolute;
+  top: 30%;
+  left: 40%;
+  opacity: 0;
+  font-size: 20px;
+  color: #fff;
+  transition: all 0.2s;
+}
+.celestial-row:hover .jupiter {
+  transform: scale(1.1);
+}
+.celestial-row:hover .lightning-bolt {
+  animation: flash 0.3s ease infinite;
+}
+
+/* 7. تأثير زحل والحلقات الكريستالية الدوارة البراقة */
+.saturn-container {
+  position: relative;
+  width: 120px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.saturn {
+  background: radial-gradient(circle at 30% 30%, #e2bf7d, #b08d46, #403211);
+  width: 50px;
+  height: 50px;
+  z-index: 2;
+}
+.saturn-rings {
+  position: absolute;
+  width: 100px;
+  height: 25px;
+  border: 6px solid rgba(226, 191, 125, 0.6);
+  border-radius: 50%;
+  transform: rotate(-15deg);
+  z-index: 3;
+  transition: all 0.5s ease;
+  box-shadow: 0 0 10px rgba(226, 191, 125, 0.3);
+}
+.celestial-row:hover .saturn {
+  transform: scale(1.1);
+}
+.celestial-row:hover .saturn-rings {
+  transform: rotate(-15deg) scale(1.2);
+  border-color: rgba(255, 215, 0, 0.9);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+}
+
+/* 8. تأثير أورانوس وموجات الصقيع الغازي المتجمد */
+.uranus {
+  background: radial-gradient(circle at 30% 30%, #70d6ff, #4ea8de, #114b7e);
+}
+.ice-mist {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid #70d6ff;
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+.celestial-row:hover .uranus {
+  transform: rotate(90deg) scale(1.1);
+}
+.celestial-row:hover .ice-mist {
+  opacity: 0.6;
+  transform: scale(1.5);
+  filter: blur(2px);
+}
+
+/* 9. تأثير نبتون وإعصار الرياح الهيدروديناميكية الداكنة */
+.neptune {
+  background: radial-gradient(circle at 30% 30%, #4361ee, #3f37c9, #10002b);
+}
+.wind-wave {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  top: 30%;
+  right: 10%;
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+.celestial-row:hover .neptune {
+  transform: scale(1.1);
+}
+.celestial-row:hover .wind-wave {
+  opacity: 1;
+  transform: scale(2.2) translateX(-20px);
+  background: rgba(255, 255, 255, 0);
+}
+
+/* أنيميشن الحركات العامة */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes stormShift {
+  from {
+    transform: translateX(-5px) rotate(5px);
+  }
+  to {
+    transform: translateX(5px) rotate(15px);
+  }
+}
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+}
+
+/* لوحة عرض البيانات التكبيرية السينمائية */
+.info-panel {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 400px;
+  height: 100%;
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-border);
+  backdrop-filter: blur(20px);
+  z-index: 999;
+  padding: 40px 30px;
+  box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+  transition: left 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+  overflow-y: auto;
+  color: var(--text-color);
+}
+.info-panel.show {
+  left: 0;
+}
+.back-btn {
+  background: transparent;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+.moons-box {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--card-border);
+}
+.moons-box ul {
+  list-style: none;
+  margin-top: 10px;
+}
+.moons-box li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.4s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* استجابة الهواتف */
+@media (max-width: 600px) {
+  .info-panel {
+    width: 100%;
+    left: -100%;
+  }
+  .celestial-row {
+    flex-direction: column;
+    text-align: center;
+  }
+  .visual-container {
+    margin-left: 0;
+    margin-bottom: 20px;
+  }
+  .system-line {
+    display: none;
+  }
+}
